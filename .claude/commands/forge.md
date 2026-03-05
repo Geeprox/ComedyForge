@@ -12,6 +12,7 @@ Run Comedy Forge protocol to generate stand-up/manzai material.
 - `batch-size`: `10-500` (default: `50`)
 - `audience-size`: `10-200` (default: `30`)
 - `absurd-booster`: `3-50` (default: `3`)
+- `angle-preset`: `balanced | conservative | exploratory` (default: `balanced`)
 
 ## Procedure
 
@@ -22,5 +23,5 @@ Run Comedy Forge protocol to generate stand-up/manzai material.
 ## Example
 
 ```text
-/forge type=auto theme="职场汇报焦虑" min-rounds=3 max-rounds=5 survival-rate=0.3 batch-size=50 audience-size=30 absurd-booster=5
+/forge type=auto theme="职场汇报焦虑" min-rounds=3 max-rounds=5 survival-rate=0.3 batch-size=50 audience-size=30 absurd-booster=5 angle-preset=balanced
 ```

@@ -77,11 +77,11 @@ If the skill is triggered, installation is successful.
 
 ## Core Capabilities
 
-- Parameterized `forge` generation with `type/theme/min-rounds/max-rounds/survival-rate/batch-size/audience-size/absurd-booster`
+- Parameterized `forge` generation with `type/theme/min-rounds/max-rounds/survival-rate/batch-size/audience-size/absurd-booster/angle-preset`
 - Strict creator/judge context isolation
 - Duo-chemistry-first scoring for manzai
 - Seed-driven audience mood shift and scoring strictness
-- Evolution loop with wildcard expansion and A/B variants
+- Evolution loop with wildcard expansion and A/B (conditional C) variants
 - Comment-driven rewrite pipeline (structured signals only)
 - Composite set-list scoring and second-pass polishing
 
@@ -102,7 +102,7 @@ If the skill is triggered, installation is successful.
 Example intent:
 
 ```text
-forge type=auto theme="Workplace reporting anxiety" min-rounds=3 max-rounds=5 survival-rate=0.3 batch-size=50 audience-size=30 absurd-booster=5
+forge type=auto theme="Workplace reporting anxiety" min-rounds=3 max-rounds=5 survival-rate=0.3 batch-size=50 audience-size=30 absurd-booster=5 angle-preset=balanced
 ```
 
 ## Contributing

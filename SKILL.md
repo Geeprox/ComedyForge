@@ -25,12 +25,23 @@ Use this file as the primary entrypoint for skill-based agents (including Claude
 
 ## Command Shape
 
-`forge type=<standup|manzai|auto> theme=<required> min-rounds=<3..20> max-rounds=<5..30> survival-rate=<0.1..0.5> batch-size=<10..500> audience-size=<10..200> absurd-booster=<3..50>`
+`forge type=<standup|manzai|auto> theme=<required> min-rounds=<3..20> max-rounds=<5..30> survival-rate=<0.1..0.5> batch-size=<10..500> audience-size=<10..200> absurd-booster=<3..50> angle-preset=<balanced|conservative|exploratory>`
+
+Defaults:
+
+- `type=auto`
+- `min-rounds=3`
+- `max-rounds=5`
+- `survival-rate=0.3`
+- `batch-size=50`
+- `audience-size=30`
+- `absurd-booster=3`
+- `angle-preset=balanced`
 
 ## Non-Negotiable Rules
 
 - Keep creator and judge contexts isolated.
 - Never expose raw judge comments to creator-side prompts.
 - For manzai, prioritize duo chemistry over single punch density.
-- Enforce wildcard A/B variant flow and candidate pool cap.
+- Enforce wildcard A/B flow (with conditional C) and candidate pool cap.
 - Apply comment-driven rewrite signals only as structured actions.

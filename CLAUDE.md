@@ -8,8 +8,20 @@ When running tasks in Claude Code, use this file as the operational entrypoint.
 Use `forge` intent with required `theme`, for example:
 
 ```text
-forge type=auto theme="职场汇报焦虑" min-rounds=3 max-rounds=5 survival-rate=0.3 batch-size=50 audience-size=30 absurd-booster=5
+forge type=auto theme="职场汇报焦虑" min-rounds=3 max-rounds=5 survival-rate=0.3 batch-size=50 audience-size=30 absurd-booster=5 angle-preset=balanced
 ```
+
+Parameters:
+
+- `type`: `standup | manzai | auto` (default: `auto`)
+- `theme`: required
+- `min-rounds`: `3-20` (default: `3`)
+- `max-rounds`: `5-30` (default: `5`)
+- `survival-rate`: `0.1-0.5` (default: `0.3`)
+- `batch-size`: `10-500` (default: `50`)
+- `audience-size`: `10-200` (default: `30`)
+- `absurd-booster`: `3-50` (default: `3`)
+- `angle-preset`: `balanced | conservative | exploratory` (default: `balanced`)
 
 ## Execution Contract
 
@@ -32,4 +44,4 @@ forge type=auto theme="职场汇报焦虑" min-rounds=3 max-rounds=5 survival-ra
 - Keep creator and judge contexts isolated.
 - Do not expose raw judge comments to creator side.
 - For manzai, prioritize duo chemistry over single punch density.
-- Enforce wildcard A/B mechanism and candidate pool cap.
+- Enforce wildcard A/B mechanism (with conditional C) and candidate pool cap.

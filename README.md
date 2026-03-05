@@ -75,11 +75,11 @@ npx skills add https://github.com/Geeprox/ComedyForge
 
 ## 核心能力
 
-- `forge` 参数化生成：`type/theme/min-rounds/max-rounds/survival-rate/batch-size/audience-size/absurd-booster`
+- `forge` 参数化生成：`type/theme/min-rounds/max-rounds/survival-rate/batch-size/audience-size/absurd-booster/angle-preset`
 - 创作者与评审上下文隔离
 - Manzai 双人气场优先评分
 - Seed 驱动观众情绪分布与评分松紧联动
-- 遗传进化 + 外卡扩容 + A/B 版本机制
+- 遗传进化 + 外卡扩容 + A/B（条件 C）版本机制
 - 评语驱动改写（结构化信号，不透传原始评语）
 - Set List 组合评分 + 二次精修回路
 
@@ -100,7 +100,7 @@ npx skills add https://github.com/Geeprox/ComedyForge
 示例意图：
 
 ```text
-forge type=auto theme="职场汇报焦虑" min-rounds=3 max-rounds=5 survival-rate=0.3 batch-size=50 audience-size=30 absurd-booster=5
+forge type=auto theme="职场汇报焦虑" min-rounds=3 max-rounds=5 survival-rate=0.3 batch-size=50 audience-size=30 absurd-booster=5 angle-preset=balanced
 ```
 
 ## 贡献
