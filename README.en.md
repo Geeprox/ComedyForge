@@ -5,7 +5,12 @@
 A protocol-driven skill for stand-up/manzai generation, covering the full loop from persona creation to audience simulation, evolutionary scoring, comment-driven rewriting, and final set assembly.
 
 Paper-style mechanism walkthrough:  
-[Comedy Forge Mechanism Paper](./docs/comedy-forge-mechanism-paper.md)
+[Comedy Forge Mechanism Paper (English)](./docs/comedy-forge-mechanism-paper.en.md)  
+[中文论文版本](./docs/comedy-forge-mechanism-paper.md)
+
+Angle preset playbook:  
+[Angle Preset Playbook (English)](./docs/angle-preset-playbook.en.md)  
+[中文版手册](./docs/angle-preset-playbook.md)
 
 ## Compatibility
 
@@ -22,7 +27,7 @@ This repository is not Codex-only. It is designed to work with:
 npx skill add https://github.com/Geeprox/ComedyForge
 ```
 
-### Compatibility Command (Some Environments)
+If `skill` is not available in your environment, use this compatibility alias instead (same behavior):
 
 ```bash
 npx skills add https://github.com/Geeprox/ComedyForge

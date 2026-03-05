@@ -13,10 +13,11 @@
 4. 调用`system/scoring-protocol.md`：
    - 去极值
    - 均分/标准差
-   - 亚组分数（若audience>100）
+   - 亚组分数（若audience>100，按当轮A/B/C/D模板）
    - Polarizer判定
 5. 应用Seed情绪联动：
-   - 若本轮Seed命中负向氛围（如`雨夜沮丧`），将`mood=疲惫/暴躁`采样占比从默认40%提升到60%
+   - 若本轮Seed命中负向氛围（如`雨夜沮丧`），将负向情绪组采样占比从默认40%提升到60%
+   - 负向情绪组定义为：`疲惫/暴躁/焦虑/厌世`
    - 评分松紧偏移与裁剪逻辑严格执行`system/scoring-protocol.md`第4节
 6. 生成本轮结果：Top池、外卡池、淘汰池。
 7. 调用`system/comment-rewrite-rules.md`生成改写信号：

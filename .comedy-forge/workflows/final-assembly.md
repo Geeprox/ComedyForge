@@ -48,12 +48,17 @@ set_score =
 - 加入节奏标注：`[停顿] [加速] [收]`
 - 给每个段子附`callback关联建议`
 - 对台词长度做口语化压缩，避免书面腔
+- 精修模式池：`compress/callback_boost/clarity_boost/persona_lock/risk_soften`
 
 ## 3.1 二次精修回路（强制）
 对已选Set List中的每条段子执行1轮定向精修：
 1. 生成`vA-压缩版`：压缩冗余铺垫，目标台词长度下降10%-20%。
 2. 生成`vB-callback强化版`：保留核心笑点，增强与前后段落的梗回收接口。
-3. 在不破坏人格一致性的前提下，比较`vA/vB`的快速复评得分，选择更优版本入演出稿。
+3. 若触发以下任一条件，追加`vC-稳定性版`（从`clarity_boost/persona_lock/risk_soften`三选一）：
+   - `clarity`低于阈值
+   - 出现人格口吻漂移
+   - 冒犯风险标记升高
+4. 在不破坏人格一致性的前提下，比较`vA/vB(/vC)`的快速复评得分，选择更优版本入演出稿。
 
 精修验收阈值：
 - `clarity`不得下降超过0.1。
@@ -74,4 +79,4 @@ set_score =
 
 额外输出要求：
 - 必须附`set_score`与四个子维度分解。
-- 每条入选段子必须附`polish_track`（初稿/vA/vB/最终采用版本）。
+- 每条入选段子必须附`polish_track`（初稿/vA/vB(/vC)/最终采用版本）。

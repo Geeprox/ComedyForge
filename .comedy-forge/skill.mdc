@@ -41,6 +41,10 @@ commands:
         type: integer
         range: [3, 50]
         default: 3
+      - name: angle-preset
+        type: enum
+        values: [balanced, conservative, exploratory]
+        default: balanced
 
 runtime:
   context_isolation: strict
@@ -52,6 +56,7 @@ runtime:
     - audience-size in [10, 200]
     - survival-rate in [0.1, 0.5]
     - absurd-booster in [3, 50]
+    - angle-preset in [balanced, conservative, exploratory]
   required_protocols:
     - system/persona-generator.md
     - system/scoring-protocol.md
@@ -71,10 +76,15 @@ runtime:
     mood_negative_seed_ratio: 0.60
     mood_default_ratio: 0.40
     mood_positive_seed_ratio_range: [0.25, 0.30]
+    audience_subgroup_template_mode: seed_driven_pool
     mood_bias:
       tired: -0.15
       irritable: -0.25
       optimistic: 0.10
+      anxious: -0.10
+      bored: -0.12
+      relieved: 0.05
+      cynical: -0.18
     polarizer_dual_threshold:
       audience_le_100:
         sigma_gt: 1.15
@@ -86,12 +96,16 @@ runtime:
     survival_rate_applied: true
     wildcard_mode: expand_slots
     wildcard_max_origins_per_round: 5
-    wildcard_variants_per_origin: 2
+    wildcard_variants_per_origin_base: 2
+    wildcard_variants_per_origin_max: 3
+    wildcard_variant_c_conditional: true
     candidate_pool_hard_cap: 500
   assembly_contract:
     second_pass_polish_enabled: true
-    polish_variant_count_per_joke: 2
-    polish_modes: [compress, callback_boost]
+    polish_variant_count_per_joke_base: 2
+    polish_variant_count_per_joke_max: 3
+    conditional_third_variant_enabled: true
+    polish_modes: [compress, callback_boost, clarity_boost, persona_lock, risk_soften]
     setlist_composite_scoring_enabled: true
     setlist_objective_weights:
       avg_individual_score: 0.55
@@ -109,6 +123,89 @@ runtime:
   diversity_contract:
     sampling_mode: active_subset_then_sample
     weighting_mode: core_long_tail_dynamic
+    angle_preset_default: balanced
+    angle_preset_values: [balanced, conservative, exploratory]
+    angle_weight_profiles:
+      balanced:
+        self_deprecating: 0.14
+        observational_misdirection: 0.16
+        absurd_extrapolation: 0.13
+        attack_external: 0.11
+        wordplay: 0.10
+        situational_simulation: 0.11
+        role_contrast: 0.08
+        rule_loophole: 0.07
+        meta_narrative_self_mock: 0.06
+        emotional_backfire: 0.04
+      conservative:
+        self_deprecating: 0.16
+        observational_misdirection: 0.18
+        absurd_extrapolation: 0.15
+        attack_external: 0.13
+        wordplay: 0.11
+        situational_simulation: 0.12
+        role_contrast: 0.05
+        rule_loophole: 0.04
+        meta_narrative_self_mock: 0.03
+        emotional_backfire: 0.03
+      exploratory:
+        self_deprecating: 0.12
+        observational_misdirection: 0.14
+        absurd_extrapolation: 0.11
+        attack_external: 0.10
+        wordplay: 0.09
+        situational_simulation: 0.09
+        role_contrast: 0.12
+        rule_loophole: 0.09
+        meta_narrative_self_mock: 0.08
+        emotional_backfire: 0.06
+    angle_quota_profiles:
+      balanced:
+        top1_share_max: 0.35
+        batch_10_29:
+          long_tail_share_min: 0.15
+          long_tail_active_min: 2
+        batch_30_79:
+          long_tail_share_min: 0.20
+          long_tail_active_min: 3
+        batch_80_200:
+          long_tail_share_min: 0.22
+          long_tail_active_min: 4
+        batch_201_500:
+          long_tail_share_min: 0.25
+          long_tail_active_min: 4
+      conservative:
+        top1_share_max: 0.40
+        batch_10_29:
+          long_tail_share_min: 0.10
+          long_tail_active_min: 1
+        batch_30_79:
+          long_tail_share_min: 0.12
+          long_tail_active_min: 2
+        batch_80_200:
+          long_tail_share_min: 0.14
+          long_tail_active_min: 3
+        batch_201_500:
+          long_tail_share_min: 0.15
+          long_tail_active_min: 4
+      exploratory:
+        top1_share_max: 0.33
+        batch_10_29:
+          long_tail_share_min: 0.20
+          long_tail_active_min: 2
+        batch_30_79:
+          long_tail_share_min: 0.28
+          long_tail_active_min: 3
+        batch_80_200:
+          long_tail_share_min: 0.32
+          long_tail_active_min: 4
+        batch_201_500:
+          long_tail_share_min: 0.35
+          long_tail_active_min: 4
+    angle_quota_conversion_method: floor_plus_largest_remainder
+    angle_quota_delta_tolerance_ratio: 0.06
+    angle_quota_delta_tolerance_count_min: 1
+    angle_quota_hit_rate_min: 0.80
     active_count_capped_by_dimension_cardinality: true
     active_count_by_batch:
       batch_10_29: [4, 6]
@@ -120,8 +217,8 @@ runtime:
       batch_30_79: [3, 10]
       batch_80_200: [4, 18]
       batch_201_500_min: 8
-    core_weight_total_range: [0.70, 0.80]
-    long_tail_weight_total_range: [0.20, 0.30]
+    core_weight_total_range: [0.65, 0.85]
+    long_tail_weight_total_range: [0.15, 0.35]
     long_tail_weight_hard_cap: 0.35
     value_weight_bounds: [0.03, 0.22]
     health_metrics:
@@ -140,6 +237,11 @@ runtime:
 hard_constraints:
   - 单一代际占比不得超过50%
   - 相邻段子语言风格必须不同
+  - 喜剧角度配额必须覆盖10类，并按angle-preset对应的core/long-tail比例执行
+  - angle-preset必须为balanced/conservative/exploratory之一，缺省为balanced
+  - 每轮必须先生成angle_quota_plan，再进行段子采样与角度分配
+  - 每轮必须输出angle_quota_report（目标/实际/偏差）并满足命中率下限
+  - 预期违背层级必须使用L0-L5并满足分层配额
   - 认知滤镜每批至少覆盖5种
   - 身份处境每批至少覆盖4种（batch-size>=50时至少5种）
   - 当下状态每批至少覆盖4种（batch-size>=50时至少5种）
@@ -149,11 +251,14 @@ hard_constraints:
   - 激活值样本数必须满足分段目标：batch<30为[2,6]，30-79为[3,10]，80-200为[4,18]，201-500至少8（受维度总库上限约束）
   - 身份处境禁止“刚X”短时事件；短时事件必须写入当下状态
   - 每轮必须产出diversity_health_report并在最终输出呈现健康结论
+  - Audience>100时必须使用亚组模板池，不得固定单一A/B/C/D矩阵
+  - 评分偏移枚举必须覆盖疲惫/暴躁/乐观/焦虑/无聊/释然/厌世
   - 每轮新血与旧精英认知滤镜差异度>0.5
   - Polarizer段子可外卡晋级且每轮最多5个
   - 下一轮必须对外卡段子生成A/B双版本测试
+  - 命中重复/结尾可预测/人格崩坏条件时，外卡段子可追加variant-C
   - type=manzai时，评分必须优先考虑双人气场配合度
   - seed必须影响观众情绪采样与评分宽松度
   - Final Assembly必须执行Set List组合评分后再确定Top 6-8
-  - 入选段子必须经过一轮二次精修（压缩版/Callback强化版二选一）
+  - 入选段子必须经过一轮二次精修（至少A/B二选一；触发清晰度/人格/风险条件时追加vC）
   - 创作者侧不得读取评审原始评语，只能读取结构化改写信号

@@ -50,14 +50,22 @@
 - `MANZAI_CHEMISTRY_WEAK`（仅manzai）
   - 动作：`增加装傻-吐槽来回次数`、`强化接梗反应速度`
 
+### 4.5 场内重复与收束质量
+- `REPEAT_WITHIN_SET`（与同场段子重复）
+  - 动作：`切换角度`、`替换冲突对象`
+- `ENDING_PREDICTABLE`（结尾可预测）
+  - 动作：`增加假设误导句`、`后移关键反转词`
+- `PERSONA_COLLAPSE`（人格口吻崩坏）
+  - 动作：`重写首句人格锚点`、`统一叙述人称`
+
 ## 5. 诊断算法
 1. 对评语做关键词与语义匹配，映射到标签。
 2. 计算标签得分：`tag_score = sum(comment_weight * confidence)`。
 3. 选Top 1-3个标签作为该段子改写信号。
 4. 对每个标签分配优先级：
-   - P1：结构致命问题（LOGIC_GAP, TARGET_BLUR, MANZAI_CHEMISTRY_WEAK）
-   - P2：显著影响笑点（PUNCH_WEAK, RHYTHM_FLAT, CALLBACK_WEAK）
-   - P3：风格优化（JARGON_OVERLOAD, CONTEXT_HEAVY, LENS_DRIFT）
+   - P1：结构致命问题（LOGIC_GAP, TARGET_BLUR, MANZAI_CHEMISTRY_WEAK, TOO_OFFENSIVE）
+   - P2：显著影响笑点（PUNCH_WEAK, RHYTHM_FLAT, CALLBACK_WEAK, ENDING_PREDICTABLE, REPEAT_WITHIN_SET）
+   - P3：风格优化（JARGON_OVERLOAD, CONTEXT_HEAVY, LENS_DRIFT, PERSONA_COLLAPSE）
 
 ## 6. 输出结构（强制）
 ```yaml

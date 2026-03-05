@@ -4,25 +4,28 @@
 在单轮内生成满足多样性约束的段子池，并输出Joke对象草案。
 
 ## 步骤
-1. 读取输入：`theme/type/batch-size/round/history/absurd-booster/rewrite_signals_map`。
+1. 读取输入：`theme/type/batch-size/round/history/absurd-booster/angle-preset/rewrite_signals_map`。
 2. 读取上一轮结构化改写信号（若存在）：
    - 对`wildcard`与“边缘淘汰段”优先分配改写动作
    - 将`P1动作`先执行，`P2/P3`作为候补
 3. 调用`system/persona-generator.md`构建本轮8维`active_values`（总库 -> 激活子集）。
-4. 在`active_values`内采样人格池，并执行维度边界校验（身份处境=长期角色；短时事件进入当下状态）。
-5. 给每个人格绑定创作任务：
+4. 按`angle-preset`选择权重配置（默认`balanced`）。
+5. 调用`system/batch-diversity.md`生成本轮`angle_quota_plan`（目标角度配额）。
+6. 在`active_values`内采样人格池，并执行维度边界校验（身份处境=长期角色；短时事件进入当下状态）。
+7. 按`angle_quota_plan`给每个段子分配角度，再绑定创作任务：
    - 生成`setup`
    - 生成`punchline`
    - 标注`angle`与`预期违背层级`
-6. 初稿完成后执行`system/batch-diversity.md`：
+8. 初稿完成后执行`system/batch-diversity.md`：
    - 人格配额检查
    - 激活值样本数检查
    - 维度边界检查
    - 角度配额检查
+   - 角度目标/实际偏差检查
    - 层级配额检查
    - 去重（batch-size > 100）
-7. 对不合格段子进行定向重写（角度/滤镜/当下状态/叙述视角）。
-8. 输出合格Joke池，写入轮次缓存（含`active_values_snapshot`与`diversity_health_report`）。
+9. 对不合格段子进行定向重写（角度/滤镜/当下状态/叙述视角）。
+10. 输出合格Joke池，写入轮次缓存（含`active_values_snapshot`、`angle_preset`、`angle_quota_plan`、`angle_quota_report`与`diversity_health_report`）。
 
 ## 创作硬规则
 - 保持“说真话 + 预期违背 + 结构收束 + callback潜力”。
@@ -56,6 +59,9 @@
 - `PUNCH_WEAK` -> 提升预期违背层级或增加对照反差句
 - `CALLBACK_WEAK` -> 插入前文锚点并在收尾回收
 - `MANZAI_CHEMISTRY_WEAK` -> 增加装傻/吐槽来回次数
+- `REPEAT_WITHIN_SET` -> 切换角度或替换冲突对象，避免同场撞梗
+- `ENDING_PREDICTABLE` -> 增加假设误导句并后移关键反转词
+- `PERSONA_COLLAPSE` -> 重写首句人格锚点并统一叙述人称
 
 执行策略：
 - 每条待改写段子最多应用3个动作，按`P1 > P2 > P3`排序。
@@ -71,4 +77,7 @@
 - `metadata.callback_potential`
 - `metadata.rewrite_applied_actions`（若由评语驱动改写触发）
 - `metadata.active_values_snapshot`
+- `metadata.angle_preset`
+- `metadata.angle_quota_plan`
+- `metadata.angle_quota_report`
 - `metadata.diversity_health_report`

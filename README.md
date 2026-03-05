@@ -5,7 +5,12 @@
 一个面向脱口秀/漫才创作的协议化 Skill，支持“人格生成 -> 观众模拟 -> 评分进化 -> 评语驱动改写 -> 最终演出组装”的完整流程。
 
 论文风格运行机制详解：  
-[《Comedy Forge 运行机制论文式说明》](./docs/comedy-forge-mechanism-paper.md)
+[《Comedy Forge 运行机制论文式说明（中文）》](./docs/comedy-forge-mechanism-paper.md)  
+[English Paper Version](./docs/comedy-forge-mechanism-paper.en.md)
+
+角度预设选择手册：  
+[《Angle Preset 选择手册（中文）》](./docs/angle-preset-playbook.md)  
+[Angle Preset Playbook (English)](./docs/angle-preset-playbook.en.md)
 
 ## 兼容性
 
@@ -22,7 +27,7 @@
 npx skill add https://github.com/Geeprox/ComedyForge
 ```
 
-### 兼容命令（部分环境）
+如果你的环境里 `skill` 命令不可用，再使用下面的兼容别名（功能相同）：
 
 ```bash
 npx skills add https://github.com/Geeprox/ComedyForge

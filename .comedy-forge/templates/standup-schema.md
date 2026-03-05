@@ -34,4 +34,6 @@ metadata:
 ## 规则
 - `setup`必须提供真实可感情境。
 - `punchline`必须体现预期违背。
+- `expectation_level`必须使用`L0-L5`枚举。
+- `style.angle`应来自最新10类角度配额池。
 - 必须出现至少一个可回收callback锚点。
