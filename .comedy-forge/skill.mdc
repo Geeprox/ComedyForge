@@ -1,0 +1,159 @@
+name: comedy-forge
+version: 1.0.0
+description: 通过多人格批量创作 + 观众模拟评分 + 遗传进化，生成高质量脱口秀/漫才段子。
+
+compatibility:
+  targets: [codex, claude-code]
+  claude_entrypoint: ../CLAUDE.md
+
+commands:
+  - name: forge
+    description: 生成一场可演出的段子集合，并输出进化日志与X区实验段子。
+    args:
+      - name: type
+        type: enum
+        values: [standup, manzai, auto]
+        default: auto
+      - name: theme
+        type: string
+        required: true
+      - name: min-rounds
+        type: integer
+        range: [3, 20]
+        default: 3
+      - name: max-rounds
+        type: integer
+        range: [5, 30]
+        default: 5
+      - name: survival-rate
+        type: number
+        range: [0.1, 0.5]
+        default: 0.3
+      - name: batch-size
+        type: integer
+        range: [10, 500]
+        default: 50
+      - name: audience-size
+        type: integer
+        range: [10, 200]
+        default: 30
+      - name: absurd-booster
+        type: integer
+        range: [3, 50]
+        default: 3
+
+runtime:
+  context_isolation: strict
+  creator_cannot_see_raw_scores: true
+  output_path_pattern: output/comedy-forge-{theme}-{YYYYMMDD-HHMMSS}.md
+  input_validation:
+    - min-rounds <= max-rounds
+    - batch-size in [10, 500]
+    - audience-size in [10, 200]
+    - survival-rate in [0.1, 0.5]
+    - absurd-booster in [3, 50]
+  required_protocols:
+    - system/persona-generator.md
+    - system/scoring-protocol.md
+    - system/comment-rewrite-rules.md
+    - system/evolution-rules.md
+    - system/batch-diversity.md
+    - workflows/batch-creator.md
+    - workflows/audience-simulator.md
+    - workflows/distillation-engine.md
+    - workflows/final-assembly.md
+    - templates/standup-schema.md
+    - templates/manzai-schema.md
+    - templates/output-format.md
+  scoring_contract:
+    manzai_duo_chemistry_first: true
+    seed_mood_shift_enabled: true
+    mood_negative_seed_ratio: 0.60
+    mood_default_ratio: 0.40
+    mood_positive_seed_ratio_range: [0.25, 0.30]
+    mood_bias:
+      tired: -0.15
+      irritable: -0.25
+      optimistic: 0.10
+    polarizer_dual_threshold:
+      audience_le_100:
+        sigma_gt: 1.15
+      audience_gt_100:
+        sigma_gt: 1.20
+        peer_variance_gt: 1.5
+        cross_group_std_gt: 0.75
+  evolution_contract:
+    survival_rate_applied: true
+    wildcard_mode: expand_slots
+    wildcard_max_origins_per_round: 5
+    wildcard_variants_per_origin: 2
+    candidate_pool_hard_cap: 500
+  assembly_contract:
+    second_pass_polish_enabled: true
+    polish_variant_count_per_joke: 2
+    polish_modes: [compress, callback_boost]
+    setlist_composite_scoring_enabled: true
+    setlist_objective_weights:
+      avg_individual_score: 0.55
+      flow_score: 0.20
+      callback_chain_score: 0.15
+      diversity_score: 0.10
+      adjacency_overlap_penalty: -0.15
+  rewrite_contract:
+    comment_driven_rewriter_enabled: true
+    low_score_vote_threshold: 2
+    borderline_vote_threshold: 3
+    max_actions_per_joke: 3
+    rewrite_scope: [wildcard, borderline, low_score]
+    creator_visibility: structured_signals_only
+  diversity_contract:
+    sampling_mode: active_subset_then_sample
+    weighting_mode: core_long_tail_dynamic
+    active_count_capped_by_dimension_cardinality: true
+    active_count_by_batch:
+      batch_10_29: [4, 6]
+      batch_30_79: [6, 10]
+      batch_80_200: [8, 14]
+      batch_201_500: [10, 16]
+    expected_count_per_value:
+      batch_lt_30: [2, 6]
+      batch_30_79: [3, 10]
+      batch_80_200: [4, 18]
+      batch_201_500_min: 8
+    core_weight_total_range: [0.70, 0.80]
+    long_tail_weight_total_range: [0.20, 0.30]
+    long_tail_weight_hard_cap: 0.35
+    value_weight_bounds: [0.03, 0.22]
+    health_metrics:
+      coverage_ratio_key_min: 0.80
+      coverage_ratio_other_min: 0.70
+      normalized_entropy_key_min: 0.72
+      normalized_entropy_other_min: 0.65
+      top1_share_key_max: 0.35
+      top1_share_other_max: 0.40
+      pair_repeat_rate_max: 0.03
+      elite_filter_drift_range: [0.30, 0.70]
+      jsd_key_range: [0.08, 0.35]
+    state_events_must_be_in_current_state: true
+    identity_must_be_long_horizon_role: true
+
+hard_constraints:
+  - 单一代际占比不得超过50%
+  - 相邻段子语言风格必须不同
+  - 认知滤镜每批至少覆盖5种
+  - 身份处境每批至少覆盖4种（batch-size>=50时至少5种）
+  - 当下状态每批至少覆盖4种（batch-size>=50时至少5种）
+  - 语言风格每批至少覆盖3种（batch-size>=50时至少4种）
+  - 多样性采样必须先激活子集再逐段子采样
+  - 多样性采样必须使用core/long-tail动态调权，不得全量等概率抽样
+  - 激活值样本数必须满足分段目标：batch<30为[2,6]，30-79为[3,10]，80-200为[4,18]，201-500至少8（受维度总库上限约束）
+  - 身份处境禁止“刚X”短时事件；短时事件必须写入当下状态
+  - 每轮必须产出diversity_health_report并在最终输出呈现健康结论
+  - 每轮新血与旧精英认知滤镜差异度>0.5
+  - Polarizer段子可外卡晋级且每轮最多5个
+  - 下一轮必须对外卡段子生成A/B双版本测试
+  - type=manzai时，评分必须优先考虑双人气场配合度
+  - seed必须影响观众情绪采样与评分宽松度
+  - Final Assembly必须执行Set List组合评分后再确定Top 6-8
+  - 入选段子必须经过一轮二次精修（压缩版/Callback强化版二选一）
+  - 创作者侧不得读取评审原始评语，只能读取结构化改写信号
