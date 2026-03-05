@@ -69,8 +69,6 @@ npx skills add https://github.com/Geeprox/ComedyForge
 │   ├── standup-schema.md
 │   ├── manzai-schema.md
 │   └── output-format.md
-└── context/
-    └── hot-topics.md
 ```
 
 ## 核心能力

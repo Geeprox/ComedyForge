@@ -71,8 +71,6 @@ If the skill is triggered, installation is successful.
 │   ├── standup-schema.md
 │   ├── manzai-schema.md
 │   └── output-format.md
-└── context/
-    └── hot-topics.md
 ```
 
 ## Core Capabilities
