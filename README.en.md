@@ -4,6 +4,9 @@
 
 A protocol-driven skill for stand-up/manzai generation, covering the full loop from persona creation to audience simulation, evolutionary scoring, comment-driven rewriting, and final set assembly.
 
+Paper-style mechanism walkthrough:  
+[\"Comedy Forge Mechanism Paper\"](./docs/comedy-forge-mechanism-paper.md)
+
 ## Compatibility
 
 This repository is not Codex-only. It is designed to work with:
